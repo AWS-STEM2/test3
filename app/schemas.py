@@ -1,7 +1,37 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
+from datetime import datetime
+from typing import Optional
 
-class Item(BaseModel):
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class UserBase(BaseModel):
+    email: EmailStr
+
+class UserCreate(UserBase):
+    password: str
+
+class User(UserBase):
+    id: int
+    is_active: bool
+
+    class Config:
+        orm_mode = True
+
+class ItemBase(BaseModel):
     name: str
-    description: str | None = None
+    description: Optional[str] = None
     price: float
-    tax: float | None = None
+
+class ItemCreate(ItemBase):
+    pass
+
+class Item(ItemBase):
+    id: int
+    owner_id: int
+    created_at: datetime
+    image_url: Optional[str] = None
+
+    class Config:
+        orm_mode = True
